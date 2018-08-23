@@ -1,0 +1,113 @@
+@import url("https://fonts.googleapis.com/css?family=Lato");
+.wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-family: "Lato";
+  font-size: 100%;
+}
+.wrapper > * {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero img {
+  padding-top: 10vh;
+  width: 50vw;
+  object-fit: contain;
+}
+.hero .title {
+  font-size: 2.5em;
+  letter-spacing: 0.2em;
+  font-weight: 200;
+}
+
+.about {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #efeeff;
+}
+.about .title {
+  font-size: 2.5em;
+  letter-spacing: 0.2em;
+  font-weight: 200;
+  padding-top: 10%;
+}
+.about .subtitle {
+  text-align: center;
+}
+.about div {
+  width: 50%;
+}
+.about .content {
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+}
+.about .content div {
+  width: 40%;
+  margin-top: 25px;
+  padding: 15px 10px;
+  text-align: center;
+}
+.about .content i {
+  font-size: 6rem;
+  color: #cfc9e1;
+}
+.about button {
+  margin: 25px 0px;
+}
+
+@media (min-width: 1200px) {
+  .new-game {
+    background-image: url("../img/background.png");
+    background-size: 100% 100%;
+    height: 100vh;
+    background-repeat: no-repeat;
+  }
+}
+@media (max-width: 767px) {
+  .new-game {
+    background-image: none;
+  }
+}
+.footer {
+  height: 5vh;
+}
+
+.button {
+  font-size: 1em;
+  border-radius: 20px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background-color: #7f79da;
+  padding: 10px 20px;
+  color: #fff;
+}
+.button:hover {
+  animation-name: button-hov;
+  animation-duration: 550ms;
+  animation-fill-mode: forwards;
+}
+
+@keyframes button-hov {
+  100% {
+    background-color: #cfc9e1;
+    color: #4a3b76;
+    transform: scale(1.1);
+  }
+}
+input:focus,
+button:focus {
+  outline: none;
+}
+
+/*# sourceMappingURL=styles.css.map */
