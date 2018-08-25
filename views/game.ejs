@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        const socket = io();
+        console.log(socket)
+        var name = LE NAME! 
+        var room;
+        console.log('------> ', name);
+
+        socket.emit('host', {
+            name: name
+        });
+        socket.emit('room', room);
+        socket.on('host-name', (data => {
+            $('#name').html(name);
+        }));
+        socket.on('message', (data) => {
+            console.log('new message: ', data);
+        });
+    </script>
+</head>
+
+<body>
+    <h1>New game started by
+        <span id="name"></span>
+    </h1>
+    <form id="new-msg">
+        <input type="text" name="new-msg">
+        <input type="submit" value="Send Message">
+    </form>
+    <div id="all-msgs"></div>
+</body>
+
+</html>

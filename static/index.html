@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CharadesRTC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="./css/styles.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="../css/styles.css" />
     <!-- jQuery CDN  -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
@@ -15,8 +15,21 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
         crossorigin="anonymous">
-    <script src="./js/scripts.js"></script>
-
+        <script type="text/javascript" src="./js/scripts.js"></script>
+    <script>
+        $(document).ready(function () {
+            console.log('hay gurl hay')
+            $('#new-game-form, #join-game-form').hide();
+            $('#show-new-form').click(function () {
+                $('#join-game-form').hide();
+                $('#new-game-form').fadeIn();
+            });
+            $('#show-join-form').click(function () {
+                $('#new-game-form').hide();
+                $('#join-game-form').fadeIn();
+            })
+        });
+    </script>
 </head>
 
 <body>
@@ -56,11 +69,27 @@
         <div class="new-game" id="new-game">
             <h1 class="title">Start a new game</h1>
             <p>Try it out for yourself :)</p>
-            <button class="button">Create new game</button>
+
+            <button class="button" id="show-new-form">New game</button>
+            <br/>
+            <button class="button" id="show-join-form">Join game</button>
+            <section class="form-space">
+                <form action="/new-game" method="POST" id="new-game-form">
+                    <label for="user-name">Name</label>
+                    <input type="text" name="user-name">
+                    <button class="button">Submit</button>
+                </form>
+                <form action="/join-game" method="POST" id="join-game-form">
+                    <label for="game-id">Name</label>
+                    <input type="text" name="game-id">
+                    <label for="game-id">Game Code</label>
+                    <input type="text" name="game-id">
+                    <button class="button">Submit</button>
+                </form>
+            </section>
         </div>
         <div class="footer">
-            <p>Coded by
-               Theresa Eliger | 2018</p>
+            <p>Coded by Theresa Eliger | 2018</p>
         </div>
     </div>
 </body>
