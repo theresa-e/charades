@@ -15,9 +15,12 @@
   align-items: center;
 }
 
+.hero {
+  height: 100vh;
+}
 .hero img {
   padding-top: 10vh;
-  width: 50vw;
+  width: 50%;
   object-fit: contain;
 }
 .hero .title {
@@ -97,7 +100,6 @@
   animation-duration: 550ms;
   animation-fill-mode: forwards;
 }
-
 
 @keyframes button-hov {
   100% {

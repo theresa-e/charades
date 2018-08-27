@@ -5,7 +5,7 @@
     flex-direction: column;
     font-family: "Lato";
     font-size: 100%;
-    >* {
+    > * {
         width: 100vw;
         height: 100vh;
         display: flex;
@@ -16,9 +16,10 @@
 }
 
 .hero {
+    height: 100vh;
     img {
         padding-top: 10vh;
-        width: 50vw;
+        width: 50%;
         object-fit: contain;
     }
     .title {
