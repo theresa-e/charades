@@ -17,6 +17,7 @@
 
 .hero {
   height: 100vh;
+  padding-bottom: 25px;
 }
 .hero img {
   padding-top: 10vh;
