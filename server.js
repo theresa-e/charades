@@ -27,15 +27,13 @@ app.use(session({
 
 /* ---------- socket.io ---------- */
 const io = require('socket.io')(server);
-var host = {}
+var socketHost = {}
 var room;
 
 // Establish connection with client
 io.on('connection', function (socket) {
-    socket.on('host', (data) => {
-        host = data;
-        socket.emit('host-name', host)
-    });
+    // send the name from the index page
+    socket.emit('hostName', {host: socketHost});
     socket.on('room', (room) => {
         // Socket will join room.
         socket.join(room);
@@ -51,10 +49,12 @@ app.set('views', path.join(__dirname, './views'));
 // ---------- Static Views ----------
 app.use(express.static(__dirname + '/static'));
 
-// Start new game form is submitted.
+
+// 'Start new game' form is submitted
 app.post('/new-game', (req, res) => {
-    // get username
-    console.log('NEW GAME, REQ.BODY: ', req.body);
+    // get username and save in session
+    console.log('NEW GAME, REQ.BODY.hostName: ', req.body.hostName);
+    req.session.hostName = req.body.hostName;
 
     // generate a random code for a new game
     var gameCode = '';
@@ -68,16 +68,13 @@ app.post('/new-game', (req, res) => {
 });
 
 app.get('/game/:gameCode', (req, res) => {
-    console.log('REQ.BODY: ', req.body)
-    console.log('The game code: ', req.params.gameCode);
-
+    socketHost = req.session.hostName;
     res.render('game', {
-        name: req.body
+        name: req.session.hostName
     });
 });
 
 // Landing
 app.get('/', (req, res) => {
-    var name = req.body;
     res.send('index.html');
 });

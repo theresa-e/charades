@@ -17,7 +17,6 @@
 
 .hero {
   height: 100vh;
-  padding-bottom: 25px;
 }
 .hero img {
   padding-top: 10vh;
@@ -112,6 +111,12 @@
 input:focus,
 button:focus {
   outline: none;
+}
+
+#all-msgs {
+  border: 1px solid black;
+  width: 50%;
+  height: 100%;
 }
 
 /*# sourceMappingURL=styles.css.map */

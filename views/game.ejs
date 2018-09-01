@@ -13,35 +13,36 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         const socket = io();
-        console.log(socket)
-        var name;
-        var room;
-        console.log('------> ', name);
 
-        socket.emit('host', {
-            name: name
+        // send the host name back to server
+        socket.on('hostName', (res) => {
+            console.log('we got the name from the server: ', res);
+            $('#name').html(res.host);
         });
-        socket.emit('room', room);
-        socket.on('host-name', (data => {
-            $('#name').html(name);
-        }));
-        socket.on('message', (data) => {
-            console.log('new message: ', data);
-        });
+
+        // console.log('name from server:', name)
+        // socket.emit('room', room);
+        // socket.on('host-name', (data => {
+        //     $('#name').html(name);
+        // }));
+
+
+        // socket.on('message', (data) => {
+        //     console.log('new message: ', data);
+        // });
     </script>
 </head>
 
 <body>
-    <h1>New game started by
-        <span id="name">
-            <%= name %>
-        </span>
-    </h1>
-    <form id="new-msg">
-        <input type="text" name="new-msg">
-        <input type="submit" value="Send Message">
-    </form>
-    <div id="all-msgs"></div>
+        <h1>game is hosted by:
+            <span id="name"> <%= name %>
+            </span>
+        </h1>
+        <form id="new-msg">
+            <input type="text" name="new-msg">
+            <input type="submit" value="Send Message">
+        </form>
+        <div id="all-msgs">ALL MSGS:</div>
 </body>
 
 </html>
