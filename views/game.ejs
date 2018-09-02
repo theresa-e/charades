@@ -6,51 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../css/styles.css" />
+
     <!-- socket.io -->
     <script src="/socket.io/socket.io.js"></script>
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <!-- <script>
-        $(document).ready(function () {
-            const socket = io();
-            var room;
-            var host;
-            var player;
-            var gameInfo = {};
-
-            // send the host name back to server
-            socket.on('gameInfo', (res) => {
-                // get the host's name from the server
-                console.log('we got the name from the server: ', res);
-                gameInfo = res.game;
-                $('#name').html(gameInfo.host);
-                $('#room').html(gameInfo.room);
-            });
-            socket.on('hey room', (data) => {
-                console.log(data);
-            })
-
-            // when the new message is submitted, emit to all clients
-            $('#new-msg-form').submit(function () {
-                var message = $('#new-msg').val();
-                socket.emit('new-msg', {
-                    message: message
-                });
-                $('#new-msg').val(''); // reset the value in input field
-                return false;
-            })
-            socket.on('latest-msg', (res) => {
-                console.log('@@@@@', res.data);
-                $('#all-msgs').append(`<p>${res.data.message} </p>`);
-            })
-            socket.on('allMsgs', (data) => {
-                console.log(data)
-                $('#all-msgs').html(data);
-            })
-        })
-    </script> -->
-
     <script>
         $(document).ready(function () {
             var socket = io.connect();
@@ -60,22 +21,22 @@
             // Set up to receive messages for specific room.
             socket.on('connect', function () {
                 socket.emit('room', room);
+                socket.on('getAllMsgs', (res) => {
+                    console.log('allmsgs:', res.allMsgs);
+                    console.log('hi')
+
+                    for (var i = 0; i < res.allMsgs.length; i++) {
+                        $('#all-msgs').append(`<p> ${res.allMsgs[i]} </p>`);
+                    }
+                })
             });
-            
+
             socket.on('roomInfo', (res) => {
                 console.log(res);
                 host = res.host.name;
                 $('#hostName').html(host)
             })
             // Add existing messages to the chatbox div when they enter the room.
-            socket.on('getAllMsgs', (res) => {
-                console.log('allmsgs:', res.allMsgs);
-                console.log('hi')
-
-                for (var i = 0; i < res.allMsgs.length; i++) {
-                    $('#all-msgs').append(`<p> ${res.allMsgs[i]} </p>`);
-                }
-            })
             console.log(room)
 
 
@@ -96,8 +57,14 @@
 </head>
 
 <body>
-    <h1>game is hosted by:<span id="hostName"></span></h1>
-<h1>room name: <span id="roomName"><%= roomName %></span></h1>
+    <h1>game is hosted by:
+        <span id="hostName"></span>
+    </h1>
+    <h1>room name:
+        <span id="roomName">
+            <%= roomName %>
+        </span>
+    </h1>
     <form id="new-msg-form">
         <input type="text" id="new-msg">
         <input type="submit" value="Send Message">

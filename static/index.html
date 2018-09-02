@@ -77,6 +77,7 @@
                 <form action="/new" method="POST" id="new-game-form">
                     <label for="hostName">Name</label>
                     <input type="text" name="hostName">
+                    <input type="hidden" name="isHost" value="true">
                     <button class="button">Submit</button>
                 </form>
                 <form action="/join" method="POST" id="join-game-form">
@@ -84,6 +85,7 @@
                     <input type="text" name="player-name">
                     <label for="gameCode">Game Code</label>
                     <input type="text" name="gameCode">
+                    <input type="hidden" name="isHost" value="false">
                     <button class="button">Submit</button>
                 </form>
             </section>
