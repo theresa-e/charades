@@ -74,16 +74,16 @@
             <br/>
             <button class="button" id="show-join-form">Join game</button>
             <section class="form-space">
-                <form action="/new-game" method="POST" id="new-game-form">
+                <form action="/new" method="POST" id="new-game-form">
                     <label for="hostName">Name</label>
                     <input type="text" name="hostName">
                     <button class="button">Submit</button>
                 </form>
-                <form action="/join-game" method="POST" id="join-game-form">
-                    <label for="game-id">Name</label>
-                    <input type="text" name="gameId">
-                    <label for="gameId">Game Code</label>
-                    <input type="text" name="gameId">
+                <form action="/join" method="POST" id="join-game-form">
+                    <label for="player-name">Name</label>
+                    <input type="text" name="player-name">
+                    <label for="gameCode">Game Code</label>
+                    <input type="text" name="gameCode">
                     <button class="button">Submit</button>
                 </form>
             </section>
