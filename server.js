@@ -28,21 +28,28 @@ app.use(session({
 /* ---------- socket.io ---------- */
 const io = require('socket.io')(server);
 
-// temp variables
+// temp variables for scope
 var tempUser;
 var allMsgs = [];
 io.sockets.on('connection', function (socket) {
     var roomName;
     var user = tempUser
+
     socket.on('room', function (room) {
         roomName = room;
         socket.join(room);
+
+        // Get all existing messages in the room
         socket.emit('getAllMsgs', {
             allMsgs: allMsgs
         });
+
+        // Send room info to user so they can send link to friends.
         socket.emit('roomInfo', {
             host: user,
         })
+    
+        // Add each new msg to the log (to send to new users).
         socket.on('message', (res) => {
             allMsgs.push(res.message);
             io.sockets.in(roomName).emit('new-message-added', {
@@ -51,7 +58,6 @@ io.sockets.on('connection', function (socket) {
         });
     });
 });
-
 
 
 /*  ---------- View Engine ---------- */
@@ -64,11 +70,6 @@ app.use(express.static(__dirname + '/static'));
 
 // 'Start new game' form is submitted
 app.post('/new', (req, res) => {
-    // get username and save in session
-    console.log('NEW GAME, REQ.BODY.hostName: ', req.body.hostName);
-
-    // save name in socket variable to emit
-    tempUser = {name: req.body.hostName, isHost: true};
 
     // generate a random code for a new game
     var gameCode = '';
@@ -76,21 +77,27 @@ app.post('/new', (req, res) => {
     for (var i = 0; i < 6; i++) {
         gameCode += characters.charAt(Math.floor(Math.random() * characters.length));
     }
-    // save gameCode in a variable to emit
+
+    // save gameCode and name to emit to client
     roomName = gameCode;
+    tempUser = {
+        name: req.body.hostName,
+        isHost: true
+    };
 
     // custom path for each game
     res.redirect('/game/' + gameCode);
 });
 
+// 'Join existing game' form is submitted
 app.post('/join', (req, res) => {
-    console.log('USER WANTS TO JOIN THIS GAME: ', req.body);
-    res.redirect('/game/'+req.body.gameCode)
+    console.log('------ Request to join game: ', req.body);
+    res.redirect('/game/' + req.body.gameCode);
 });
 
 // Route for game page
 app.get('/game/:roomCode', (req, res) => {
-    console.log(req.params.roomCode)
+    console.log(req.params.roomCode);
     res.render('game', {
         roomName: req.params.roomCode
     });
