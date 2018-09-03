@@ -30,12 +30,13 @@ const io = require('socket.io')(server);
 
 // temp variables for scope
 var tempUser;
-var allMsgs = [];
 io.sockets.on('connection', function (socket) {
+    var allMsgs = [];
     var roomName;
     var user = tempUser
 
     socket.on('room', function (room) {
+        console.log('room name: ', room)
         roomName = room;
         socket.join(room);
 
@@ -48,7 +49,7 @@ io.sockets.on('connection', function (socket) {
         socket.emit('roomInfo', {
             host: user,
         })
-    
+
         // Add each new msg to the log (to send to new users).
         socket.on('message', (res) => {
             allMsgs.push(res.message);

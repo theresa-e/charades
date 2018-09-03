@@ -13,59 +13,66 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            var socket = io.connect();
-            var host;
-            var room = $('#roomName').text(); // pass from view back to socket
-            var allMsgs = [];
-            // Set up to receive messages for specific room.
-            socket.on('connect', function () {
-                socket.emit('room', room);
-                socket.on('getAllMsgs', (res) => {
-                    console.log('------ allmsgs:', res.allMsgs);
-                    for (var i = 0; i < res.allMsgs.length; i++) {
-                        $('#all-msgs').append(`<p> ${res.allMsgs[i]} </p>`);
-                    }
-                });
-            });
-            // Display host's name on page
-            socket.on('roomInfo', (res) => {
-                console.log(res);
-                host = res.host.name;
-                $('#hostName').html(host)
-            });
-            // Add existing messages to the chatbox div when they enter the room.
-            $('#new-msg-form').submit(function () {
-                var message = $('#new-msg').val();
-                socket.emit('message', {
-                    message: message
-                });
-                $('#new-msg').val(''); // reset the value in input field return false;
-                return false;
-            });
-            socket.on('new-message-added', (res) => {
-                $('#all-msgs').append(`<p> ${res.message} </p>`);
+        var socket = io.connect();
+        var host;
+        var room = $('#roomName').text(); // pass from view back to socket
+        var allMsgs = [];
+        // Set up to receive messages for specific room.
+        socket.on('connect', function () {
+            socket.emit('room', room);
+            socket.on('getAllMsgs', (res) => {
+                console.log('------ allmsgs:', res.allMsgs);
+                for (var i = 0; i < res.allMsgs.length; i++) {
+                    $('#all-msgs').append(`<p> ${res.allMsgs[i]} </p>`);
+                }
             });
         });
-    </script>
+        // Display host's name on page
+        socket.on('roomInfo', (res) => {
+            console.log(res);
+            host = res.host.name;
+            $('#hostName').html(host)
+        });
+        // Add existing messages to the chatbox div when they enter the room.
+        $('#new-msg-form').submit(function () {
+            var message = $('#new-msg').val();
+            socket.emit('message', {
+                message: message
+            });
+            $('#new-msg').val(''); // reset the value in input field return false;
+            return false;
+        });
+        socket.on('new-message-added', (res) => {
+            $('#all-msgs').append(`<p> ${res.message} </p>`);
+        });
+    });
+</script>
 </head>
 
 <body>
-    <h1>Host name: 
-        <span id="hostName"></span>
-    </h1>
-    <h1>Room name:
-        <span id="roomName">
-            <%= roomName %>
-        </span>
-    </h1>
-    <form id="new-msg-form">
-        <input type="text" id="new-msg">
-        <input type="submit" value="Send Message">
-    </form>
-    <div id="all-msgs">All messages:</div>
-    <p>Room URL:
-        <span id="room"></span>
-    </p>
+
+    <h1 class="title">Charades with Friends</h1>
+    <div class="container">
+        <div class="col">
+            <div class="video">*video will stream here!*</div>
+            <h2>Submit your guess</h2>
+            <div class="chat" id="all-msgs"></div>
+            <form id="new-msg-form">
+                <input type="text" id="new-msg">
+                <input type="submit" class="button" value="Send Message">
+            </form>
+        </div>
+        <div class="col">
+            <p>Host:
+                <span id="hostName"></span>
+            </p>
+            <p>Room code:
+                <span id="roomName"><%= roomName %></span>
+            </p>
+            <p>All active users:</p>
+        </div>
+
+    </div>
 </body>
 
 </html>
