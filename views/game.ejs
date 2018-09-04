@@ -11,12 +11,67 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
+    <!-- <script src="../js/webrtc.js"></script> -->
+</head>
+
+<body>
+
+    <h1 class="title">Charades with Friends</h1>
+    <div class="container">
+        <div class="col">
+            <video class="video" autoplay playsinline></video>
+            <div>
+                <h2>Submit your guess</h2>
+    
+                <div class="chat" id="all-msgs"></div>
+                <form id="new-msg-form">
+                    <input type="text" id="new-msg">
+                    <input type="submit" class="button" value="Send Message">
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <p>Host:
+                <span id="hostName"></span>
+            </p>
+            <p>Room code:
+                <span id="roomName">
+                    <%= roomName %></span>
+            </p>
+            <p>All active users:</p>
+            <button>Back to main page</button>
+        </div>
+    </div>
+</body>
+<script>
+    'use strict';
+
+    var constraints = {
+        video: true
+    };
+
+    var video = document.querySelector('video');
+
+    function handleSuccess(stream) {
+        window.stream = stream; // only to make stream available to console
+        video.srcObject = stream;
+    }
+
+    function handleError(error) {
+        console.log('getUserMedia error: ', error);
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints).
+    then(handleSuccess).catch(handleError);
+
+    $(document).ready(function () {
+        console.log(video)
         var socket = io.connect();
         var host;
         var room = $('#roomName').text(); // pass from view back to socket
         var allMsgs = [];
+
+
         // Set up to receive messages for specific room.
         socket.on('connect', function () {
             socket.emit('room', room);
@@ -27,12 +82,16 @@
                 }
             });
         });
+
+
         // Display host's name on page
-        socket.on('roomInfo', (res) => {
+        socket.on('hostName', (res) => {
             console.log(res);
             host = res.host.name;
             $('#hostName').html(host)
         });
+
+
         // Add existing messages to the chatbox div when they enter the room.
         $('#new-msg-form').submit(function () {
             var message = $('#new-msg').val();
@@ -42,37 +101,13 @@
             $('#new-msg').val(''); // reset the value in input field return false;
             return false;
         });
+
         socket.on('new-message-added', (res) => {
             $('#all-msgs').append(`<p> ${res.message} </p>`);
         });
+
+        socket.emit('video', {video: stream});
     });
 </script>
-</head>
-
-<body>
-
-    <h1 class="title">Charades with Friends</h1>
-    <div class="container">
-        <div class="col">
-            <div class="video">*video will stream here!*</div>
-            <h2>Submit your guess</h2>
-            <div class="chat" id="all-msgs"></div>
-            <form id="new-msg-form">
-                <input type="text" id="new-msg">
-                <input type="submit" class="button" value="Send Message">
-            </form>
-        </div>
-        <div class="col">
-            <p>Host:
-                <span id="hostName"></span>
-            </p>
-            <p>Room code:
-                <span id="roomName"><%= roomName %></span>
-            </p>
-            <p>All active users:</p>
-        </div>
-
-    </div>
-</body>
 
 </html>

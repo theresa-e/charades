@@ -3,7 +3,10 @@ var path = require("path")
 /* ---------- Express ---------- */
 const express = require('express');
 const app = express();
-const server = app.listen(7000);
+const server = app.listen(7000, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+});
 console.log("Running at port 7000...");
 
 /* ---------- Body Parser ---------- */
@@ -23,7 +26,6 @@ app.use(session({
         maxAge: 600000
     }
 }))
-
 
 /* ---------- socket.io ---------- */
 const io = require('socket.io')(server);
@@ -45,18 +47,25 @@ io.sockets.on('connection', function (socket) {
             allMsgs: allMsgs
         });
 
-        // Send room info to user so they can send link to friends.
-        socket.emit('roomInfo', {
-            host: user,
-        })
-
-        // Add each new msg to the log (to send to new users).
+        if (user) {
+            if (user.isHost){
+                console.log('--- New game has started: ', user);
+            } else {
+                console.log('--- Someone joined a game: ', user)
+            }
+        }
+        
         socket.on('message', (res) => {
+            console.log('new message received from server :', res)
             allMsgs.push(res.message);
             io.sockets.in(roomName).emit('new-message-added', {
                 message: res.message
             })
         });
+
+        socket.on('video', (res) => {
+            console.log('RES----: ', res)
+        })
     });
 });
 
@@ -71,28 +80,33 @@ app.use(express.static(__dirname + '/static'));
 
 // 'Start new game' form is submitted
 app.post('/new', (req, res) => {
-
-    // generate a random code for a new game
-    var gameCode = '';
-    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 6; i++) {
-        gameCode += characters.charAt(Math.floor(Math.random() * characters.length));
+    if (req.body.hostName) {
+        // generate a random code for a new game
+        var gameCode = '';
+        var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 6; i++) {
+            gameCode += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+    
+        // save gameCode and name to emit to client
+        roomName = gameCode;
+        tempUser = {
+            name: req.body.hostName,
+            isHost: true
+        };
+    
+        // custom path for each game
+        res.redirect('/game/' + gameCode);
+    } else {
+        req.flash('newgameMessage', 'You must enter a name to start a new game.');
+        res.redirect(301, '/');
     }
-
-    // save gameCode and name to emit to client
-    roomName = gameCode;
-    tempUser = {
-        name: req.body.hostName,
-        isHost: true
-    };
-
-    // custom path for each game
-    res.redirect('/game/' + gameCode);
 });
 
 // 'Join existing game' form is submitted
 app.post('/join', (req, res) => {
     console.log('------ Request to join game: ', req.body);
+    tempUser = req.body.user
     res.redirect('/game/' + req.body.gameCode);
 });
 
