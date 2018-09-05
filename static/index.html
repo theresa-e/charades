@@ -47,7 +47,6 @@
                     in. Simply start a new game,
                     send the link to your friends, and start playing.
                 </p>
-
             </div>
             <div class="content">
                 <div>
@@ -68,30 +67,12 @@
                 </div>
             </div>
             <button class="button" id="try-today">Give it a try today!</button>
-
         </div>
         <div class="new-game" id="new-game">
             <h1 class="title">Start a new game</h1>
             <p>Try it out for yourself :)</p>
-
-            <button class="button" id="show-new-form">New game</button>
-            <br />
-            <button class="button" id="show-join-form">Join game</button>
-            <section class="form-space">
-                <form action="/new" method="POST" id="new-game-form">
-                    <label for="hostName">Name</label>
-                    <input type="text" name="hostName">
-                    <input type="hidden" name="isHost" value="true">
-                    <button class="button">Submit</button>
-                </form>
-                <form action="/join" method="POST" id="join-game-form">
-                    <label for="player-name">Name</label>
-                    <input type="text" name="player-name">
-                    <label for="gameCode">Game Code</label>
-                    <input type="text" name="gameCode">
-                    <input type="hidden" name="isHost" value="false">
-                    <button class="button">Submit</button>
-                </form>
+            <a href="/new" class="button">New Game</a>
+            <a href="/join" class="button">Join Game</a>
             </section>
         </div>
     </div>

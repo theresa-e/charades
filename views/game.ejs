@@ -19,18 +19,6 @@
     <h1 class="title">Charades with Friends</h1>
     <div class="container">
         <div class="col">
-            <video class="video" autoplay playsinline></video>
-            <div>
-                <h2>Submit your guess</h2>
-    
-                <div class="chat" id="all-msgs"></div>
-                <form id="new-msg-form">
-                    <input type="text" id="new-msg">
-                    <input type="submit" class="button" value="Send Message">
-                </form>
-            </div>
-        </div>
-        <div class="col">
             <p>Host:
                 <span id="hostName"></span>
             </p>
@@ -39,11 +27,28 @@
                     <%= roomName %></span>
             </p>
             <p>All active users:</p>
-            <button>Back to main page</button>
+            <h2>How to play:</h2>
+            <p>HOST</p>
+            <div>
+                <h2>Chat</h2>
+                <div class="chat" id="all-msgs"></div>
+                <form id="new-msg-form">
+                    <input type="text" id="new-msg">
+                    <input type="submit" class="button" value="Send Message">
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <video class="video" autoplay playsinline></video>
+            <button class="button">Back to main page</button>
         </div>
     </div>
 </body>
 <script>
+    // ----------------------
+    // video stream
+    // ----------------------
+
     'use strict';
 
     var constraints = {
@@ -64,49 +69,36 @@
     navigator.mediaDevices.getUserMedia(constraints).
     then(handleSuccess).catch(handleError);
 
-    $(document).ready(function () {
-        console.log(video)
-        var socket = io.connect();
-        var host;
-        var room = $('#roomName').text(); // pass from view back to socket
-        var allMsgs = [];
+    // ----------------------
+    // jQuery / socket.io
+    // ----------------------
 
+    var name = prompt('Choose a display name')
+    $(document).ready(function () {
+        var socket = io('/' + room);
+        var host;
+        var userInfo = <%- JSON.stringify(userInfo) %>;
+        var room = <%- JSON.stringify(roomCode) %>;
+        var allMsgs = [];
 
         // Set up to receive messages for specific room.
         socket.on('connect', function () {
-            socket.emit('room', room);
-            socket.on('getAllMsgs', (res) => {
-                console.log('------ allmsgs:', res.allMsgs);
-                for (var i = 0; i < res.allMsgs.length; i++) {
-                    $('#all-msgs').append(`<p> ${res.allMsgs[i]} </p>`);
-                }
+            console.log('in socket!')
+            socket.emit('room', {
+                roomName: room
             });
+
+            socket.on('roster', function (res) {
+                console.log('----THE ROSTER: '.res)
+            })
         });
 
+        // User submits new message.
+        $('#new-msg-form').submit(function (e) {
+            e.preventDefault();
+            $('#new-msg').val("");
+        })
 
-        // Display host's name on page
-        socket.on('hostName', (res) => {
-            console.log(res);
-            host = res.host.name;
-            $('#hostName').html(host)
-        });
-
-
-        // Add existing messages to the chatbox div when they enter the room.
-        $('#new-msg-form').submit(function () {
-            var message = $('#new-msg').val();
-            socket.emit('message', {
-                message: message
-            });
-            $('#new-msg').val(''); // reset the value in input field return false;
-            return false;
-        });
-
-        socket.on('new-message-added', (res) => {
-            $('#all-msgs').append(`<p> ${res.message} </p>`);
-        });
-
-        socket.emit('video', {video: stream});
     });
 </script>
 
