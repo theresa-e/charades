@@ -16,7 +16,6 @@ body {
     font-size: 100%;
 
     >* {
-        width: 100vw;
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -30,7 +29,7 @@ body {
 
     img {
         padding-top: 10vh;
-        width: 50%;
+        width: 20rem;
         object-fit: contain;
     }
 }
@@ -61,17 +60,12 @@ body {
         text-align: center;
     }
 
-    div {
-        width: 50%;
-    }
-
     .content {
         width: 50%;
         display: flex;
         justify-content: space-between;
 
         div {
-            width: 40%;
             margin-top: 25px;
             padding: 15px 10px;
             text-align: center;
@@ -82,25 +76,13 @@ body {
             color: #cfc9e1;
         }
     }
-
-    button {
-        margin: 25px 0px;
-    }
 }
 
 @media (min-width: 1200px) {
     .new-game {
         background-image: url("../img/background.png");
-        background-size: 100% 100%;
-        height: 100vh;
+        background-size: cover;
         background-repeat: no-repeat;
-    }
-}
-
-// Remove bg image for smaller screens
-@media (max-width: 767px) {
-    .new-game {
-        background-image: none;
     }
 }
 
@@ -125,6 +107,23 @@ body {
     }
 }
 
+.new-game {
+    .button {
+        margin: 5px 10px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 5px;
+        width: 40%;
+        .button {
+            background-color: rgb(153, 203, 190);
+        }
+    }
+}
+
 @keyframes button-hov {
     100% {
         background-color: #cfc9e1;
@@ -140,39 +139,76 @@ button:focus {
 
 #all-msgs {
     border: 1px solid black;
-    display: flex;
-    flex-direction: column;
     overflow: scroll;
     height: 250px;
+    display: flex;
+    flex-direction: column;
 
-    span:nth-child(odd) {
+    p {
+        padding: 0;
         margin: 0;
+    }
+
+    p:nth-child(odd) {
         background-color: grey;
+        width: 100%;
     }
 }
 
 input {
     padding: 0;
-    height: 25px;
 
     &[type="text"] {
-        background-color: orange;
+        background-color: #e5e5e5;
         width: 75%;
         margin: 0;
-        border: 1px solid black;
+        border: none;
         box-sizing: border-box;
+        border-radius: 4px;
+        padding: 2px;
+        height: 2em;
+        font-size: 1em;
     }
+}
 
-    &[type="submit"] {
-        width: 24%;
-        left: 0;
-    }
+a {
+    text-decoration: none;
 }
 
 .video {
     min-height: 450px;
     border: 1px solid black;
     width: 100%;
+}
+
+@media (max-width: 736px) {
+    .about {
+        height: 100%;
+        padding-bottom: 30px;
+    }
+
+    .content {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .new-game {
+        background-image: none;
+        height: 100%;
+        padding-bottom: 30px;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 5px;
+
+            .button {
+                width: 80%;
+                background-color: rgb(153, 203, 190);
+            }
+        }
+    }
 }
 
 @media (min-width: 1000px) {
@@ -196,6 +232,7 @@ input {
     h2 {
         margin: 0;
     }
+
     .button {
         width: 24%;
         font-size: .7em;

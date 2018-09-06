@@ -89,12 +89,12 @@ io.sockets.on('connection', function (socket) {
         // when the client enters the new room, we'll add the room name
         // to the rooms array.
         console.log(room.roomName)
-        
+
         // check if the room exist
         if (!allRooms[room.roomName]) {
             allRooms[room.roomName] = [];
         }
- 
+
         socket.room = room;
         socket.join(room.roomName);
         console.log('allrooms: ', allRooms)
@@ -106,13 +106,24 @@ io.sockets.on('connection', function (socket) {
             console.log('allrooms: ', allRooms)
             console.log('socket.username: ', socket.username);
             // send the full list to this sender-client
-            socket.emit('getActiveUsers', {allRooms: allRooms})
+            socket.emit('getActiveUsers', {
+                allRooms: allRooms
+            })
             // everyone else only needs the new user
-            socket.broadcast.to(room.roomName).emit('newUser', {newUser: user.name});
+            socket.broadcast.to(room.roomName).emit('newUser', {
+                newUser: user.name
+            });
         });
+        socket.on("newMsg", function (msg) {
+            console.log('----- NEW MSG: ', msg);
+            console.log('----- ROOM: ', room)
+            io.sockets.in(room.roomName).emit('updateMsgs', {
+                msg: msg
+            });
+        })
     });
-    
-    socket.on('disconnect', function(){
+
+    socket.on('disconnect', function () {
         socket.leave(socket.room)
     })
 

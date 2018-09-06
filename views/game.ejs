@@ -127,11 +127,26 @@
         console.log('new USER!', msg)
         $('#active-users').append(`<li> ${ msg.newUser} </li>`);
     });
+
+    socket.on('updateMsgs', function (res) {
+        console.log('updateMsgs');
+        $('#all-msgs').append(`<p><span>${res.msg.sender} : </span> ${res.msg.message}</p>`);
+    });
     // User submits new message.
     $('#new-msg-form').submit(function (e) {
         e.preventDefault();
+        console.log("new msg was submitted")
+
+        // store the value in variable then reset input field.
+        var msg = $('#new-msg').val();
         $('#new-msg').val("");
+        console.log('--msg: ', msg);
+        socket.emit("newMsg", {
+            message: msg,
+            sender: name
+        });
     })
+
     $('#name').html(name);
 </script>
 
