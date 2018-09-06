@@ -3,11 +3,11 @@ var path = require("path")
 // ---------- Express ---------- 
 const express = require('express');
 const app = express();
-const server = app.listen(7000, function () {
+const server = app.listen(3000, function () {
     var host = server.address().address;
     var port = server.address().port;
 });
-console.log("Running at port 7000...");
+console.log("Running at port 3000...");
 
 // ---------- Body Parser ---------- 
 var bodyParser = require('body-parser');
@@ -27,28 +27,6 @@ app.use(session({
     }
 }))
 
-// ---------- socket.io ---------- 
-const io = require('socket.io')(server);
-
-// temp variables for scope
-var tempUser;
-var usernames = {};
-var rooms = [];
-
-io.sockets.on('connection', function (socket) {
-
-    if (tempUser) {
-        socket.nickname = tempUser.name // save name in socket connection
-    }
-    console.log('Socket successfully connected, id: ', socket.id);
-    socket.on('room', function (room) {
-        rooms.push(room);
-        roomName = room;
-        socket.join(roomName);
-        socket.room = roomName;
-        console.log('---- JOINING ROOM: ', roomName)
-    });
-});
 
 // ---------- View Engine ----------
 app.set('view engine', 'ejs');
@@ -76,7 +54,7 @@ app.get('/new', (req, res) => {
 });
 
 // 'Join existing game' form is submitted
-app.get('/join', (req, res) => {
+app.post('/join', (req, res) => {
     console.log('------ Request to join game: ', req.body);
     req.session.isHost = false; // let user join as a player
     res.redirect('/game/' + req.body.gameCode);
@@ -84,7 +62,8 @@ app.get('/join', (req, res) => {
 
 // Route for game page
 app.get('/game/:roomCode', (req, res) => {
-    var userInfo = req.session.isHost; // user joins as a HOST!
+    // isHost is determined by which path user went through
+    var userInfo = req.session.isHost;
     res.render('game', {
         userInfo: userInfo,
         roomCode: req.params.roomCode
@@ -94,4 +73,47 @@ app.get('/game/:roomCode', (req, res) => {
 // Landing page
 app.get('/', (req, res) => {
     res.send('index.html');
+});
+
+// ---------- socket.io ---------- 
+const io = require('socket.io')(server);
+
+// temp variables for scope
+var tempUser;
+var allUsers = {};
+var allRooms = {};
+io.sockets.on('connection', function (socket) {
+    console.log('Socket successfully connected, id: ', socket.id);
+
+    socket.on('room', function (room) {
+        // when the client enters the new room, we'll add the room name
+        // to the rooms array.
+        console.log(room.roomName)
+        
+        // check if the room exist
+        if (!allRooms[room.roomName]) {
+            allRooms[room.roomName] = [];
+        }
+ 
+        socket.room = room;
+        socket.join(room.roomName);
+        console.log('allrooms: ', allRooms)
+        console.log('---- JOINING ROOM: ', room);
+        console.log('socket.room: ', socket.room);
+        socket.on('addUser', function (user) {
+            socket.username = user.name;
+            allRooms[room.roomName].push(user.name)
+            console.log('allrooms: ', allRooms)
+            console.log('socket.username: ', socket.username);
+            // send the full list to this sender-client
+            socket.emit('getActiveUsers', {allRooms: allRooms})
+            // everyone else only needs the new user
+            socket.broadcast.to(room.roomName).emit('newUser', {newUser: user.name});
+        });
+    });
+    
+    socket.on('disconnect', function(){
+        socket.leave(socket.room)
+    })
+
 });

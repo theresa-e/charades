@@ -19,14 +19,9 @@
     <script>
         $(document).ready(function () {
             console.log('hay gurl hay')
-            $('#new-game-form, #join-game-form').hide();
-            $('#show-new-form').click(function () {
-                $('#join-game-form').hide();
-                $('#new-game-form').fadeIn();
-            });
-            $('#show-join-form').click(function () {
-                $('#new-game-form').hide();
-                $('#join-game-form').fadeIn();
+            $('#join-form').hide();
+            $('#show-form').click(function () {
+                $('#join-form').fadeIn();
             })
         });
     </script>
@@ -54,7 +49,7 @@
                     <p>Host</p>
                     <p>The host can share the </p>
                     <p>The game starts when the host is ready. A random word will be generated for the host to act out
-                        (have
+                        (haves
                         fun with it!).</p>
                 </div>
                 <div>
@@ -72,8 +67,12 @@
             <h1 class="title">Start a new game</h1>
             <p>Try it out for yourself :)</p>
             <a href="/new" class="button">New Game</a>
-            <a href="/join" class="button">Join Game</a>
-            </section>
+            <a id="show-form" class="button">Join Game</a>
+            <form action="/join" method="post" id="join-form">
+                <label for="gameCode">Game code: </label>
+                <input type="text" name="gameCode">
+                <input type="submit" class="button">
+            </form>
         </div>
     </div>
 </body>

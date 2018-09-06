@@ -20,13 +20,16 @@
     <div class="container">
         <div class="col">
             <p>Host:
-                <span id="hostName"></span>
+                <span id="name"></span>
             </p>
             <p>Room code:
                 <span id="roomName">
-                    <%= roomName %></span>
+                    <%= roomCode %></span>
             </p>
             <p>All active users:</p>
+            <ul id="active-users">
+
+            </ul>
             <h2>How to play:</h2>
             <p>HOST</p>
             <div>
@@ -74,32 +77,62 @@
     // ----------------------
 
     var name = prompt('Choose a display name')
-    $(document).ready(function () {
-        var socket = io('/' + room);
-        var host;
-        var userInfo = <%- JSON.stringify(userInfo) %>;
-        var room = <%- JSON.stringify(roomCode) %>;
-        var allMsgs = [];
+    var socket = io.connect('/');
+    var host;
+    var hostStatus;
+    var userInfo = <%- JSON.stringify(userInfo) %>
+    var room = <%- JSON.stringify(roomCode) %>
 
-        // Set up to receive messages for specific room.
-        socket.on('connect', function () {
-            console.log('in socket!')
-            socket.emit('room', {
-                roomName: room
-            });
+    var allMsgs = [];
+    console.log('room val: ', room)
 
-            socket.on('roster', function (res) {
-                console.log('----THE ROSTER: '.res)
-            })
+    // Set up to receive messages for specific room.
+    socket.on('connect', function () {
+        // when the socket connects we will send the room's name back.
+        socket.emit('room', {
+            roomName: room
         });
 
-        // User submits new message.
-        $('#new-msg-form').submit(function (e) {
-            e.preventDefault();
-            $('#new-msg').val("");
-        })
-
+        // send name and player type back to server
+        socket.emit('addUser', {
+            name: name,
+            isHost: userInfo,
+            room: room
+        });
     });
+
+    // all users active in *all* rooms
+    socket.on('allUsers', function (res) {
+        console.log('all the users in dis room');
+        console.log(res);
+    });
+
+    // get users active in specific room
+    socket.on('getActiveUsers', function (res) {
+        console.log(res.allRooms);
+        console.log(room)
+
+        // check who is in this room.
+        if (res.allRooms[room]) {
+
+            // add them to an active user list
+            for (var i = 0; i < res.allRooms[room].length; i++) {
+                $('#active-users').append(`<li class="active"> ${ res.allRooms[room][i] } </li>`);
+            }
+            console.log(res.allRooms[room]);
+        }
+    });
+
+    socket.on('newUser', function (msg) {
+        console.log('new USER!', msg)
+        $('#active-users').append(`<li> ${ msg.newUser} </li>`);
+    });
+    // User submits new message.
+    $('#new-msg-form').submit(function (e) {
+        e.preventDefault();
+        $('#new-msg').val("");
+    })
+    $('#name').html(name);
 </script>
 
 </html>
