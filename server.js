@@ -90,19 +90,37 @@ io.sockets.on('connection', function (socket) {
         // to the rooms array.
         console.log(room.roomName)
 
-        // check if the room exist
+        // check if the room exist. set structure.
         if (!allRooms[room.roomName]) {
-            allRooms[room.roomName] = [];
+            allRooms[room.roomName] = {
+                host: {},
+                players: []
+            }
         }
 
-        socket.room = room;
+        socket.room = room.roomName;
         socket.join(room.roomName);
         console.log('allrooms: ', allRooms)
         console.log('---- JOINING ROOM: ', room);
         console.log('socket.room: ', socket.room);
         socket.on('addUser', function (user) {
+            // save the room name and client name to socket
             socket.username = user.name;
-            allRooms[room.roomName].push(user.name)
+            console.log(allRooms)
+            // if user is a host, set them as host.
+            // else (they are a player), add them to player array.
+            if (user.isHost === true) {
+                allRooms[room.roomName].host = user;
+            } else {
+                allRooms[room.roomName].players.push({
+                    name: user.name,
+                    id: socket.id,
+                    isHost: user.isHost
+                });
+                io.sockets.in(socket.room).emit('updateActiveUsers', {
+                    allRooms: allRooms
+                });
+            }
             console.log('allrooms: ', allRooms)
             console.log('socket.username: ', socket.username);
             // send the full list to this sender-client
@@ -124,7 +142,14 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
-        socket.leave(socket.room)
+        console.log('--------- Client has disconnected from room: ', socket.room)
+        for (var i = 0; i < allRooms[socket.room].players.length; i++) {
+            if (allRooms[socket.room].players[i]['id'] === socket.id) {
+                allRooms[socket.room].players.splice(i, 1);
+                io.sockets.in(socket.room).emit('updateActiveUsers', {
+                    allUsers: allUsers
+                });
+            }
+        }
     })
-
 });

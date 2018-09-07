@@ -11,40 +11,46 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <!-- <script src="../js/webrtc.js"></script> -->
+    <!-- Font awesome CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 
 <body>
 
     <h1 class="title">Charades with Friends</h1>
     <div class="container">
-        <div class="col">
-            <p>Host:
-                <span id="name"></span>
-            </p>
-            <p>Room code:
-                <span id="roomName">
-                    <%= roomCode %></span>
-            </p>
-            <p>All active users:</p>
-            <ul id="active-users">
+        <div class="col left">
+            <!-- Info about the game will show here (if user joined player or host) -->
+            <div class="block-one">
+                <p>Welcome
+                    <span id="name"></span>!
+                </p>
+                <p>Host: <span id="host"></span></p>
+                <p>Game code: <span id="roomName">
+                        <%= roomCode %></span></p>
+                <p id="instructions"></p>
+                <a href="/" class="button">back to main page</a>
+            </div>
+            <div class="block-two">
+                <p>All active players:</p>
+                <ul id="active-users">
+                </ul>
+            </div>
 
-            </ul>
-            <h2>How to play:</h2>
-            <p>HOST</p>
+        </div>
+        <div class="col">
+            <video class="video" autoplay playsinline></video>
             <div>
                 <h2>Chat</h2>
                 <div class="chat" id="all-msgs"></div>
                 <form id="new-msg-form">
                     <input type="text" id="new-msg">
-                    <input type="submit" class="button" value="Send Message">
+                    <input type="submit" class="button" value="send">
                 </form>
             </div>
         </div>
-        <div class="col">
-            <video class="video" autoplay playsinline></video>
-            <button class="button">Back to main page</button>
-        </div>
+
     </div>
 </body>
 <script>
@@ -80,6 +86,7 @@
     var socket = io.connect('/');
     var host;
     var hostStatus;
+    // userinfo is a boolean (checks if user is a host or not)
     var userInfo = <%- JSON.stringify(userInfo) %>
     var room = <%- JSON.stringify(roomCode) %>
 
@@ -109,29 +116,38 @@
 
     // get users active in specific room
     socket.on('getActiveUsers', function (res) {
-        console.log(res.allRooms);
-        console.log(room)
-
+        // display the host name in host section
+        $('#host').text(res.allRooms[room].host.name);
         // check who is in this room.
         if (res.allRooms[room]) {
 
             // add them to an active user list
-            for (var i = 0; i < res.allRooms[room].length; i++) {
-                $('#active-users').append(`<li class="active"> ${ res.allRooms[room][i] } </li>`);
+            for (var i = 0; i < res.allRooms[room].players.length; i++) {
+                $('#active-users').append(`<li class="active"> ${ res.allRooms[room][i].name } </li>`);
             }
             console.log(res.allRooms[room]);
         }
     });
 
-    socket.on('newUser', function (msg) {
-        console.log('new USER!', msg)
-        $('#active-users').append(`<li> ${ msg.newUser} </li>`);
+    // Everytime a user leaves, we update the list for everyone else. 
+    socket.on('updateActiveUsers', function (res) {
+        console.log(res);
+        $('#active-users').empty();
+        if (res.allRooms[room]) {
+            console.log('@@@@@', res.allRooms[room])
+            // add them to an active user list
+            for (var i = 0; i < res.allRooms[room].players.length; i++) {
+                $('#active-users').append(`<li> ${res.allRooms[room].players[i].name} </li>`);
+            }
+            console.log(res.allRooms[room]);
+        }
     });
 
     socket.on('updateMsgs', function (res) {
         console.log('updateMsgs');
         $('#all-msgs').append(`<p><span>${res.msg.sender} : </span> ${res.msg.message}</p>`);
     });
+
     // User submits new message.
     $('#new-msg-form').submit(function (e) {
         e.preventDefault();
@@ -146,6 +162,13 @@
             sender: name
         });
     })
+
+    if (userInfo == true) {
+        $('#instructions').append(
+            '<p>You\'re the host of this game!</p><p>Act out the secret work for the guest to see.</p>');
+    } else {
+        $('#instructions').text("You're a player in this game. Submit your guesses in the chatroom below")
+    }
 
     $('#name').html(name);
 </script>
