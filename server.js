@@ -77,7 +77,7 @@ app.get('/', (req, res) => {
 
 // ---------- socket.io ---------- 
 const io = require('socket.io')(server);
-
+const ss = require('socket.io-stream');
 // temp variables for scope
 var tempUser;
 var allUsers = {};
@@ -100,9 +100,9 @@ io.sockets.on('connection', function (socket) {
 
         socket.room = room.roomName;
         socket.join(room.roomName);
-        console.log('---- allRooms: ', allRooms)
+        console.log('---- ALLROOMS: ', allRooms)
         console.log('---- JOINING ROOM: ', room);
-        console.log('---- socket.room: ', socket.room);
+        console.log('---- SOCKET.ROOM: ', socket.room);
         socket.on('addUser', function (user) {
             // save the room name and client name to socket
             socket.username = user.name;
@@ -121,8 +121,8 @@ io.sockets.on('connection', function (socket) {
                     allRooms: allRooms
                 });
             }
-            console.log('allrooms: ', allRooms)
-            console.log('socket.username: ', socket.username);
+            console.log('---- ALLROOMS: ', allRooms)
+            console.log('---- SOCKET.USERNAME: ', socket.username);
             // send the full list to this sender-client
             socket.emit('getActiveUsers', {
                 allRooms: allRooms
@@ -144,7 +144,7 @@ io.sockets.on('connection', function (socket) {
     // when a client disconnects from a room, remove them from the 
     // active user list and 
     socket.on('disconnect', function () {
-        console.log('--------- Client has disconnected from room: ', socket.room)
+        console.log('---- Client has disconnected from room: ', socket.room)
         for (var i = 0; i < allRooms[socket.room].players.length; i++) {
             if (allRooms[socket.room].players[i]['id'] === socket.id) {
                 allRooms[socket.room].players.splice(i, 1);

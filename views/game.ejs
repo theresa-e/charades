@@ -44,19 +44,23 @@
                 </div>
             </div>
             <div class="active-players">
-                <h2>All active players:</h2>
-                <ul id="active-users">
-                </ul>
+                <div>
+                    <h2>All active players:</h2>
+                    <div class="chat">
+                        <ul id="active-users">
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>Chat</h2>
+                    <div class="chat" id="all-msgs"></div>
+                    <form id="new-msg-form">
+                        <input type="text" id="new-msg">
+                        <input type="submit" class="button" value="send">
+                    </form>
+                </div>
             </div>
 
-            <div>
-                <h2>Chat</h2>
-                <div class="chat" id="all-msgs"></div>
-                <form id="new-msg-form">
-                    <input type="text" id="new-msg">
-                    <input type="submit" class="button" value="send">
-                </form>
-            </div>
         </div>
 
     </div>
@@ -99,10 +103,11 @@
     var room = <%- JSON.stringify(roomCode) %>
 
     var allMsgs = [];
-    console.log('room val: ', room)
+    console.log('--Room code: ', room)
 
     // Set up to receive messages for specific room.
     socket.on('connect', function () {
+        console.log('VIDEO:', video);
         // when the socket connects we will send the room's name back.
         socket.emit('room', {
             roomName: room
@@ -118,7 +123,7 @@
 
     // all users active in *all* rooms
     socket.on('allUsers', function (res) {
-        console.log('all the users in dis room');
+        console.log('---- ALL USERS IN ROOM:');
         console.log(res);
     });
 
@@ -174,7 +179,7 @@
 
     if (userInfo == true) {
         $('#instructions').append(
-            '<p>You\'re the host of this game.</p><p>Act out the secret work for the guest to see.</p>');
+            '<p>You\'re the host of this game.</p><p>Act out the secret word as the players make their guesses.</p>');
     } else {
         $('#instructions').text("You're a player in this game. Submit your guesses in the chatroom below")
     }
