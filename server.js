@@ -100,9 +100,9 @@ io.sockets.on('connection', function (socket) {
 
         socket.room = room.roomName;
         socket.join(room.roomName);
-        console.log('allrooms: ', allRooms)
+        console.log('---- allRooms: ', allRooms)
         console.log('---- JOINING ROOM: ', room);
-        console.log('socket.room: ', socket.room);
+        console.log('---- socket.room: ', socket.room);
         socket.on('addUser', function (user) {
             // save the room name and client name to socket
             socket.username = user.name;
@@ -141,6 +141,8 @@ io.sockets.on('connection', function (socket) {
         })
     });
 
+    // when a client disconnects from a room, remove them from the 
+    // active user list and 
     socket.on('disconnect', function () {
         console.log('--------- Client has disconnected from room: ', socket.room)
         for (var i = 0; i < allRooms[socket.room].players.length; i++) {

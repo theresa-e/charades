@@ -1,8 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Lato');
 $col-lightpurp: #efeeff;
 $col-brightpurp: #7f79da;
-$dropshadow: 0px 13px 25px 0px rgba(0, 0, 0,0.18);
+$col-ube: #bebbec;
+$col-drkred: #6b5e5e;
+$dropshadow: 0px 13px 25px 0px rgba(0, 0, 0, 0.18);
 $innershadow: inset 0 0 10px #000000;
+
 html,
 body {
     margin: 0;
@@ -16,6 +19,7 @@ body {
     justify-content: center;
     flex-direction: column;
     font-size: 100%;
+
     >* {
         height: 100vh;
         display: flex;
@@ -67,6 +71,7 @@ body {
         justify-content: space-between;
 
         div {
+            width: 50%;
             margin-top: 25px;
             padding: 15px 10px;
             text-align: center;
@@ -85,6 +90,8 @@ body {
         background-size: cover;
         background-repeat: no-repeat;
     }
+
+
 }
 
 .footer {
@@ -119,6 +126,7 @@ body {
         align-items: center;
         margin: 5px;
         width: 40%;
+
         .button {
             background-color: rgb(153, 203, 190);
         }
@@ -138,23 +146,6 @@ button:focus {
     outline: none;
 }
 
-#all-msgs {
-    border: 1px solid black;
-    overflow: scroll;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
-
-    p {
-        padding: 0;
-        margin: 0;
-    }
-
-    p:nth-child(odd) {
-        background-color: grey;
-        width: 100%;
-    }
-}
 
 input {
     padding: 0;
@@ -177,11 +168,11 @@ a {
 }
 
 .video {
-    min-height: 450px;
+    height: 100%;
     width: 100%;
 }
 
-@media (max-width: 736px) {
+@media (max-width: 800px) {
     .about {
         height: 100%;
         padding-bottom: 30px;
@@ -209,27 +200,42 @@ a {
             }
         }
     }
+
+    .user-info {
+        flex-direction: column;
+        align-items: center;
+
+        div {
+            text-align: center;
+        }
+    }
+
+    video {
+        margin-top: 10px;
+    }
+
 }
 
 @media (min-width: 1000px) {
     video {
         height: 480px;
     }
+
 }
 
 .container {
     display: flex;
     justify-content: space-around;
     margin: auto;
-    height: 80%;
-    padding: 0 5%;
+    padding: 0 10px;
 
     form {
         margin: 10px 0;
     }
 
     h2 {
-        margin: 0;
+        margin: 10px;
+        text-align: center;
     }
 
     .button {
@@ -237,26 +243,70 @@ a {
     }
 }
 
+.container {
+    h2 {
+        margin: 20px 0;
+        text-align: center;
+    }
+}
+
 .col {
-    width: 46%;
-    height: 100%;
+    width: 80%;
     box-shadow: $dropshadow;
-}
-
-.left {
-    padding: 0 10px;
-}
-.block-one {
-    background-color: $col-lightpurp;
+    padding: 10px;
     height: 100%;
 }
 
-.block-two  {
-    background-color: #98b2cf;
-    min-height: 150px;
+.user-info {
+    background-color: $col-lightpurp;
+    height: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-content: flex-start;
+    padding: 30px;
+
+    &__name {
+        color: orange;
+    }
+
+    &__highlight {
+        color: $col-brightpurp;
+        font-weight: 800;
+    }
+
+    div {
+        padding: 5px;
+    }
+}
+
+.active-players {
+    background-color: $col-ube;
+    height: 50%;
     margin: 0 auto;
 }
 
-#all-msg {
-    box-shadow: $innershadow;
+.chat {
+    box-shadow: $dropshadow;
+    border: none;
+    border: 1px solid #e2dbdb;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+
+    &__name {
+        font-weight: 600;
+        color: $col-drkred;
+    }
+
+
+    p {
+        padding: 5px 0;
+        margin: 0;
+        background-color: #dfcfcf;
+    }
+
+    p:nth-child(odd) {
+        background-color: #f7e8e8;
+        width: 100%;
+    }
 }

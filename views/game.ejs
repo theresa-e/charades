@@ -20,27 +20,35 @@
 
     <h1 class="title">Charades with Friends</h1>
     <div class="container">
-        <div class="col left">
+        <div class="col">
             <!-- Info about the game will show here (if user joined player or host) -->
-            <div class="block-one">
-                <p>Welcome
-                    <span id="name"></span>!
-                </p>
-                <p>Host: <span id="host"></span></p>
-                <p>Game code: <span id="roomName">
-                        <%= roomCode %></span></p>
-                <p id="instructions"></p>
-                <a href="/" class="button">back to main page</a>
+            <div class="user-info">
+                <div>
+                    <p>Welcome, <span class="user-highlight" id="name"></span>!</p>
+                    <p id="instructions"></p>
+                    <hr>
+                    <p>
+                        <span class="user-info__highlight">Host name: </span>
+                        <span id="host"></span></p>
+                    <p>
+                        <span class="user-info__highlight">Game code: </span>
+                        <span id="roomName">
+                            <%= roomCode %></span></p>
+                    <hr>
+                    <p>Game over? Head back to the main page to start or join a new one: </p>
+                    <a href="/" class="button">back to main page</a>
+                </div>
+                <div>
+                    <video class="video" autoplay playsinline></video>
+
+                </div>
             </div>
-            <div class="block-two">
-                <p>All active players:</p>
+            <div class="active-players">
+                <h2>All active players:</h2>
                 <ul id="active-users">
                 </ul>
             </div>
 
-        </div>
-        <div class="col">
-            <video class="video" autoplay playsinline></video>
             <div>
                 <h2>Chat</h2>
                 <div class="chat" id="all-msgs"></div>
@@ -55,7 +63,7 @@
 </body>
 <script>
     // ----------------------
-    // video stream
+    //      video stream
     // ----------------------
 
     'use strict';
@@ -145,7 +153,8 @@
 
     socket.on('updateMsgs', function (res) {
         console.log('updateMsgs');
-        $('#all-msgs').append(`<p><span>${res.msg.sender} : </span> ${res.msg.message}</p>`);
+        var newMsg = $(`<p><span class="chat__name">${res.msg.sender} : </span> ${res.msg.message}</p>`).hide().fadeIn();
+        $('#all-msgs').append(newMsg);
     });
 
     // User submits new message.
@@ -156,7 +165,7 @@
         // store the value in variable then reset input field.
         var msg = $('#new-msg').val();
         $('#new-msg').val("");
-        console.log('--msg: ', msg);
+        console.log('--Message: ', msg);
         socket.emit("newMsg", {
             message: msg,
             sender: name
@@ -165,7 +174,7 @@
 
     if (userInfo == true) {
         $('#instructions').append(
-            '<p>You\'re the host of this game!</p><p>Act out the secret work for the guest to see.</p>');
+            '<p>You\'re the host of this game.</p><p>Act out the secret work for the guest to see.</p>');
     } else {
         $('#instructions').text("You're a player in this game. Submit your guesses in the chatroom below")
     }
