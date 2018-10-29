@@ -86,11 +86,11 @@ io.sockets.on('connection', function (socket) {
     console.log('Socket successfully connected, id: ', socket.id);
 
     socket.on('room', function (room) {
-        // when the client enters the new room, we'll add the room name
+        // When the client enters the new room, we'll add the room name
         // to the rooms array.
         console.log(room.roomName)
 
-        // check if the room exist. set structure.
+        // Check if the room exist. Set structure.
         if (!allRooms[room.roomName]) {
             allRooms[room.roomName] = {
                 host: {},
